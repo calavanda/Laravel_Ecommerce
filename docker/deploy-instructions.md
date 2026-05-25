@@ -40,11 +40,10 @@ docker push calavanda/ecommerce-laravel:latest
 > PC4 debe estar lista antes de que PC2 y PC3 arranquen.
 
 ```bash
-# En PC4 (Ubuntu Server) – conectar por SSH:
-ssh usuario@192.168.1.104
+# Directamente en la pantalla de PC4 (Ubuntu Server):
 
-# Descargar el script de configuración y ejecutar como root:
 curl -sSL https://raw.githubusercontent.com/calavanda/Laravel_Ecommerce/main/setup-ubuntu.sh | sudo bash -s -- db
+```
 
 **El script hace automáticamente:**
 - ✅ Actualiza Ubuntu
