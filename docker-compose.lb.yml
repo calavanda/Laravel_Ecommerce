@@ -1,0 +1,41 @@
+services:
+  # ===================================================================
+  # PC 1 – Load Balancer: Nginx + Cloudflare Tunnel
+  # Instrucciones:
+  #   1. Crear tu tunnel en Cloudflare y copiar el token en el .env de PC1
+  #   2. docker compose -f docker-compose.lb.yml up -d
+  # ===================================================================
+
+  nginx-lb:
+    image: nginx:1.25-alpine
+    container_name: nginx-load-balancer
+    ports:
+      - "80:80"
+    volumes:
+      - ./docker/nginx.lb.conf:/etc/nginx/nginx.conf:ro
+    restart: unless-stopped
+    depends_on:
+      - cloudflared
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health-check"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "20m"
+        max-file: "10"
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflare-tunnel
+    command: tunnel --no-autoupdate run --token ${CLOUDFLARE_TUNNEL_TOKEN}
+    restart: unless-stopped
+    environment:
+      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
