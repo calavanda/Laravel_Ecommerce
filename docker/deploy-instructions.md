@@ -27,8 +27,8 @@ Regístrate en https://hub.docker.com. Tu usuario será `DOCKER_USER` en los com
 ```powershell
 # En tu terminal de Windows (PowerShell), desde la raíz del proyecto:
 docker login
-docker build -t DOCKER_USER/ecommerce-laravel:latest .
-docker push DOCKER_USER/ecommerce-laravel:latest
+docker build -t calavanda/ecommerce-laravel:latest .
+docker push calavanda/ecommerce-laravel:latest
 ```
 
 > Cada vez que cambies código, repite este paso para actualizar la imagen.
@@ -44,10 +44,10 @@ docker push DOCKER_USER/ecommerce-laravel:latest
 ssh usuario@192.168.1.104
 
 # Descargar el script de configuración:
-curl -sSL https://raw.githubusercontent.com/TU_USUARIO/TU_REPO/main/setup-ubuntu.sh -o setup-ubuntu.sh
+curl -sSL https://raw.githubusercontent.com/calavanda/Laravel_Ecommerce/main/setup-ubuntu.sh -o setup-ubuntu.sh
 
 # Dar permisos y ejecutar como root:
-sudo bash setup-ubuntu.sh db https://github.com/TU_USUARIO/TU_REPO.git
+sudo bash setup-ubuntu.sh db https://github.com/calavanda/Laravel_Ecommerce.git
 ```
 
 **El script hace automáticamente:**
@@ -75,8 +75,8 @@ docker exec production-redis redis-cli ping
 # En PC2 y PC3 (por separado):
 ssh usuario@192.168.1.102   # (o .103 para PC3)
 
-curl -sSL https://raw.githubusercontent.com/TU_USUARIO/TU_REPO/main/setup-ubuntu.sh -o setup-ubuntu.sh
-sudo bash setup-ubuntu.sh app https://github.com/TU_USUARIO/TU_REPO.git
+curl -sSL https://raw.githubusercontent.com/calavanda/Laravel_Ecommerce/main/setup-ubuntu.sh -o setup-ubuntu.sh
+sudo bash setup-ubuntu.sh app https://github.com/calavanda/Laravel_Ecommerce.git
 ```
 
 **Después del setup, editar el .env:**
@@ -91,7 +91,7 @@ REDIS_HOST=192.168.1.104
 SESSION_DRIVER=redis
 CACHE_STORE=redis
 QUEUE_CONNECTION=redis
-DOCKER_IMAGE=DOCKER_USER/ecommerce-laravel:latest
+DOCKER_IMAGE=calavanda/ecommerce-laravel:latest
 ```
 
 **Reiniciar los contenedores con la config correcta:**
@@ -139,8 +139,8 @@ Luego hacer commit y push.
 ```bash
 ssh usuario@192.168.1.101
 
-curl -sSL https://raw.githubusercontent.com/TU_USUARIO/TU_REPO/main/setup-ubuntu.sh -o setup-ubuntu.sh
-sudo bash setup-ubuntu.sh lb https://github.com/TU_USUARIO/TU_REPO.git
+curl -sSL https://raw.githubusercontent.com/calavanda/Laravel_Ecommerce/main/setup-ubuntu.sh -o setup-ubuntu.sh
+sudo bash setup-ubuntu.sh lb https://github.com/calavanda/Laravel_Ecommerce.git
 
 # Editar el .env de PC1 y poner el token de Cloudflare:
 sudo nano /opt/eliteshop/.env
