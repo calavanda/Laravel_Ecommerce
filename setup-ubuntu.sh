@@ -19,7 +19,7 @@ set -e
 
 ROL="${1:-app}"
 REPO_DIR="/opt/eliteshop"
-REPO_URL="${2:-https://github.com/TU_USUARIO/TU_REPO.git}"
+REPO_URL="${2:-https://github.com/calavanda/Laravel_Ecommerce.git}"
 
 # ─── Colores ─────────────────────────────────────────────────────────
 RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'
@@ -126,7 +126,7 @@ Wants=network-online.target
 Type=oneshot
 RemainAfterExit=yes
 WorkingDirectory=$REPO_DIR
-ExecStart=/usr/bin/docker compose -f $COMPOSE_FILE up -d --pull always
+ExecStart=/usr/bin/docker compose -f $COMPOSE_FILE up -d --pull always --env-file /opt/eliteshop/.env
 ExecStop=/usr/bin/docker compose -f $COMPOSE_FILE down
 TimeoutStartSec=300
 

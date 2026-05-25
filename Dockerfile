@@ -26,10 +26,29 @@ RUN apk add --no-cache \
     bash \
     shadow
 
-# Extensiones PHP via installer
-ADD https://github.com/mlocati/php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
-RUN chmod +x /usr/local/bin/install-php-extensions && \
-    install-php-extensions pdo_mysql bcmath opcache zip gd exif intl redis
+# Instalar dependencias para extensiones PHP
+RUN apk add --no-cache \
+    libzip-dev \
+    freetype-dev \
+    libjpeg-turbo-dev \
+    libpng-dev \
+    icu-dev \
+    $PHPIZE_DEPS
+
+# Extensiones PHP nativas (sin depender de descargas externas)
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg && \
+    docker-php-ext-install -j$(nproc) \
+        pdo_mysql \
+        bcmath \
+        opcache \
+        zip \
+        gd \
+        exif \
+        intl && \
+    pecl install redis && \
+    docker-php-ext-enable redis && \
+    apk del $PHPIZE_DEPS && \
+    rm -rf /tmp/pear
 
 # Instalar Composer
 COPY --from=composer:2.7 /usr/bin/composer /usr/bin/composer
