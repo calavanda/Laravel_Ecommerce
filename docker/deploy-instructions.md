@@ -43,12 +43,8 @@ docker push calavanda/ecommerce-laravel:latest
 # En PC4 (Ubuntu Server) – conectar por SSH:
 ssh usuario@192.168.1.104
 
-# Descargar el script de configuración:
-curl -sSL https://raw.githubusercontent.com/calavanda/Laravel_Ecommerce/main/setup-ubuntu.sh -o setup-ubuntu.sh
-
-# Dar permisos y ejecutar como root:
-sudo bash setup-ubuntu.sh db https://github.com/calavanda/Laravel_Ecommerce.git
-```
+# Descargar el script de configuración y ejecutar como root:
+curl -sSL https://raw.githubusercontent.com/calavanda/Laravel_Ecommerce/main/setup-ubuntu.sh | sudo bash -s -- db
 
 **El script hace automáticamente:**
 - ✅ Actualiza Ubuntu
@@ -60,10 +56,10 @@ sudo bash setup-ubuntu.sh db https://github.com/calavanda/Laravel_Ecommerce.git
 
 **Verifica que funciona:**
 ```bash
-docker exec production-mysql mysqladmin ping -u root -padmin
+sudo docker exec production-mysql mysqladmin ping -u root -padmin
 # Debe responder: mysqld is alive
 
-docker exec production-redis redis-cli ping
+sudo docker exec production-redis redis-cli ping
 # Debe responder: PONG
 ```
 
@@ -72,11 +68,9 @@ docker exec production-redis redis-cli ping
 ## Paso 2 – Configurar PC2 y PC3 (App Servers)
 
 ```bash
-# En PC2 y PC3 (por separado):
-ssh usuario@192.168.1.102   # (o .103 para PC3)
+# En PC2 y PC3 (por separado, directamente en la pantalla de la máquina):
 
-curl -sSL https://raw.githubusercontent.com/calavanda/Laravel_Ecommerce/main/setup-ubuntu.sh -o setup-ubuntu.sh
-sudo bash setup-ubuntu.sh app https://github.com/calavanda/Laravel_Ecommerce.git
+curl -sSL https://raw.githubusercontent.com/calavanda/Laravel_Ecommerce/main/setup-ubuntu.sh | sudo bash -s -- app
 ```
 
 **Después del setup, editar el .env:**
@@ -137,10 +131,8 @@ Luego hacer commit y push.
 ### 3.3 Levantar PC1
 
 ```bash
-ssh usuario@192.168.1.101
-
-curl -sSL https://raw.githubusercontent.com/calavanda/Laravel_Ecommerce/main/setup-ubuntu.sh -o setup-ubuntu.sh
-sudo bash setup-ubuntu.sh lb https://github.com/calavanda/Laravel_Ecommerce.git
+# Directamente en la pantalla de PC1:
+curl -sSL https://raw.githubusercontent.com/calavanda/Laravel_Ecommerce/main/setup-ubuntu.sh | sudo bash -s -- lb
 
 # Editar el .env de PC1 y poner el token de Cloudflare:
 sudo nano /opt/eliteshop/.env
