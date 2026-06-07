@@ -5,11 +5,10 @@ echo "========================================"
 echo "  EliteShop – Container Startup Script  "
 echo "========================================"
 
-# 1. Generar APP_KEY si no existe
+# 1. Validar APP_KEY (en clúster DEBE estar en el .env)
 if [ -z "$APP_KEY" ]; then
-    echo "[boot] Generando APP_KEY..."
-    APP_KEY=$(php artisan key:generate --show)
-    export APP_KEY
+    echo "[error] APP_KEY no está definido. En un clúster, DEBES copiar el mismo .env con el mismo APP_KEY a todos los nodos."
+    exit 1
 fi
 
 # 2. Esperar a que la base de datos esté lista
@@ -26,9 +25,9 @@ while ! php -r "new PDO('mysql:host=$DB_HOST;port=$DB_PORT;dbname=$DB_DATABASE',
 done
 echo "[boot] ✅ Base de datos disponible."
 
-# 3. Correr migraciones (solo si hay cambios pendientes)
-echo "[boot] Ejecutando migraciones..."
-php artisan migrate --force --no-interaction
+# 3. Las migraciones automáticas están deshabilitadas en clúster.
+# En un entorno multi-nodo, ejecuta 'docker exec -it laravel-app php artisan migrate' solo en el nodo PRINCIPAL.
+echo "[boot] Saltando migraciones automáticas para evitar colisiones en clúster..."
 
 # 4. Vaciar y re-cachear config/rutas para producción
 echo "[boot] Optimizando caché de configuración..."
