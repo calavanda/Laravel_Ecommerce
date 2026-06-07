@@ -14,8 +14,6 @@ services:
     volumes:
       - ./docker/nginx.lb.conf:/etc/nginx/nginx.conf:ro
     restart: unless-stopped
-    depends_on:
-      - cloudflared
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost/health-check"]
       interval: 30s
@@ -26,16 +24,18 @@ services:
       options:
         max-size: "20m"
         max-file: "10"
-
-  cloudflared:
-    image: cloudflare/cloudflared:latest
-    container_name: cloudflare-tunnel
-    command: tunnel --no-autoupdate run --token ${CLOUDFLARE_TUNNEL_TOKEN}
+  ngrok:
+    image: ngrok/ngrok:latest
+    container_name: ngrok-tunnel
+    command: "http nginx-lb:80"
     restart: unless-stopped
     environment:
-      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
+      - NGROK_AUTHTOKEN=${NGROK_AUTHTOKEN}
+    depends_on:
+      - nginx-lb
     logging:
       driver: "json-file"
       options:
         max-size: "10m"
         max-file: "3"
+

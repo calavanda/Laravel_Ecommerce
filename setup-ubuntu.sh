@@ -94,11 +94,11 @@ case "$ROL" in
     ufw allow 443/tcp  # HTTPS
     ;;
   app)
-    ufw allow from 192.168.1.0/24 to any port 8080  # Solo LAN puede acceder
+    ufw allow from 192.168.0.0/16 to any port 8080  # Solo LAN puede acceder
     ;;
   db)
-    ufw allow from 192.168.1.0/24 to any port 3306  # MySQL – solo LAN
-    ufw allow from 192.168.1.0/24 to any port 6379  # Redis – solo LAN
+    ufw allow from 192.168.0.0/16 to any port 3306  # MySQL – solo LAN
+    ufw allow from 192.168.0.0/16 to any port 6379  # Redis – solo LAN
     ;;
 esac
 
