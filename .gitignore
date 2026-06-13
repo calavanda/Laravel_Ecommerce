@@ -23,3 +23,6 @@ generate_images.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+REPORTE_REPOSITORIO.md
+GUIA_CLUSTER.md
+docker/deploy-instructions.md
