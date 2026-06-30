@@ -116,6 +116,12 @@ class AuthenticateWithClerk
                     logger()->info('Clerk Middleware: Login exitoso en Laravel');
                 }
             } else {
+                if (Auth::check()) {
+                    Auth::logout();
+                    $request->session()->invalidate();
+                    $request->session()->regenerateToken();
+                    logger()->info('Clerk Middleware: Sesión local cerrada por falta de token Clerk.');
+                }
                 $reason = method_exists($requestState, 'getErrorReason') ? ($requestState->getErrorReason()->getMessage() ?? 'unknown') : 'none';
                 logger()->warning('Clerk Middleware: requestState->isAuthenticated() es false y fallback falló', ['reason' => $reason]);
             }

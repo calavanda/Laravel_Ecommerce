@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Admin User',
             'email' => 'admin@ecommerce.com',
             'password' => bcrypt('password'),
+            'is_admin' => true,
         ]);
 
         // Sembrar el ecommerce

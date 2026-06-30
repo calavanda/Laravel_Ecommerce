@@ -90,18 +90,18 @@
                         <!-- Tarjeta número -->
                         <div class="space-y-2">
                             <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider">Número de Tarjeta</label>
-                            <input type="text" placeholder="4242 •••• •••• 4242" class="w-full px-4 py-3 bg-slate-900 border border-slate-800 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 placeholder-slate-600 transition-all duration-200">
+                            <input type="text" name="card_number" required minlength="16" maxlength="19" placeholder="4242 •••• •••• 4242" class="w-full px-4 py-3 bg-slate-900 border border-slate-800 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 placeholder-slate-600 transition-all duration-200">
                         </div>
 
                         <!-- Vencimiento y CVV -->
                         <div class="grid grid-cols-2 gap-4">
                             <div class="space-y-2">
                                 <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider">Vencimiento</label>
-                                <input type="text" placeholder="MM/AA" class="w-full px-4 py-3 bg-slate-900 border border-slate-800 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 placeholder-slate-600 transition-all duration-200">
+                                <input type="text" name="expiry_date" required placeholder="MM/AA" maxlength="5" class="w-full px-4 py-3 bg-slate-900 border border-slate-800 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 placeholder-slate-600 transition-all duration-200">
                             </div>
                             <div class="space-y-2">
                                 <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider">CVC / CVV</label>
-                                <input type="text" placeholder="123" class="w-full px-4 py-3 bg-slate-900 border border-slate-800 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 placeholder-slate-600 transition-all duration-200">
+                                <input type="text" name="cvv" required placeholder="123" minlength="3" maxlength="4" class="w-full px-4 py-3 bg-slate-900 border border-slate-800 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 placeholder-slate-600 transition-all duration-200">
                             </div>
                         </div>
                     </div>

@@ -129,7 +129,7 @@
     <div x-show="showEditModal" style="display: none;" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
             <!-- Background overlay -->
-            <div x-show="showEditModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm transition-opacity" aria-hidden="true" @click="showEditModal = false"></div>
+            <div x-show="showEditModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 bg-slate-950/80 transition-opacity" aria-hidden="true"></div>
 
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
@@ -154,7 +154,7 @@
                         <div class="space-y-4">
                             <div>
                                 <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Nombre</label>
-                                <input type="text" name="name" :value="editProduct?.name" required class="w-full px-3 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-xs focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+                                <input type="text" name="name" x-model="editProduct.name" required class="w-full px-3 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-xs focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
                             </div>
                             
                             <div>
@@ -169,21 +169,21 @@
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Precio</label>
-                                    <input type="number" step="0.01" name="price" :value="editProduct?.price" required class="w-full px-3 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-xs focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+                                    <input type="number" step="0.01" name="price" x-model="editProduct.price" required class="w-full px-3 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-xs focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
                                 </div>
                                 <div>
                                     <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Stock</label>
-                                    <input type="number" name="stock" :value="editProduct?.stock" required class="w-full px-3 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-xs focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+                                    <input type="number" name="stock" x-model="editProduct.stock" required class="w-full px-3 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-xs focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
                                 </div>
                             </div>
                             
                             <div>
                                 <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Descripción</label>
-                                <textarea name="description" :value="editProduct?.description" required rows="3" class="w-full px-3 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-xs focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"></textarea>
+                                <textarea name="description" x-model="editProduct.description" required rows="3" class="w-full px-3 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-xs focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"></textarea>
                             </div>
 
                             <div class="flex items-center gap-3 py-2 bg-slate-950/50 px-3 rounded-xl border border-slate-800">
-                                <input type="checkbox" name="is_featured" id="edit_is_featured" value="1" :checked="editProduct?.is_featured" class="h-4 w-4 bg-slate-900 border-slate-700 text-emerald-500 focus:ring-emerald-500/50 rounded transition-colors cursor-pointer">
+                                <input type="checkbox" name="is_featured" id="edit_is_featured" value="1" :checked="editProduct?.is_featured == 1" class="h-4 w-4 bg-slate-900 border-slate-700 text-emerald-500 focus:ring-emerald-500/50 rounded transition-colors cursor-pointer">
                                 <label for="edit_is_featured" class="text-xs font-medium text-white cursor-pointer select-none">Destacar en Portada</label>
                             </div>
                         </div>
