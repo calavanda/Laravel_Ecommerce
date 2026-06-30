@@ -27,6 +27,7 @@ Route::middleware(['clerk'])->group(function () {
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
     Route::get('/checkout/success/{tracking_number}', [CheckoutController::class, 'success'])->name('checkout.success');
+    Route::get('/checkout/invoice/{tracking_number}', [CheckoutController::class, 'invoice'])->name('checkout.invoice');
 });
 
 // ==========================================
@@ -41,6 +42,12 @@ Route::middleware(['clerk', 'clerk.admin'])->prefix('admin')->group(function () 
     Route::post('/product/{id}/stock', [AdminController::class, 'updateStock'])->name('admin.product.update-stock');
     Route::put('/product/{id}', [AdminController::class, 'updateProduct'])->name('admin.product.update');
     Route::delete('/product/{id}', [AdminController::class, 'destroyProduct'])->name('admin.product.destroy');
+    
+    // Categorías
+    Route::get('/categories', [AdminController::class, 'categories'])->name('admin.categories.index');
+    Route::post('/categories', [AdminController::class, 'storeCategory'])->name('admin.categories.store');
+    Route::put('/categories/{id}', [AdminController::class, 'updateCategory'])->name('admin.categories.update');
+    Route::delete('/categories/{id}', [AdminController::class, 'destroyCategory'])->name('admin.categories.destroy');
     
     // Pedidos
     Route::get('/orders', [AdminController::class, 'orders'])->name('admin.orders.index');

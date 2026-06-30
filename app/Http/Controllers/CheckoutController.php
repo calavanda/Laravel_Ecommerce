@@ -51,6 +51,9 @@ class CheckoutController extends Controller
             'address' => 'required|string|max:255',
             'city' => 'required|string|max:255',
             'zip_code' => 'required|string|max:10',
+            'card_number' => 'required|string|min:16',
+            'expiry_date' => 'required|string|max:5',
+            'cvv' => 'required|string|min:3|max:4',
         ]);
 
         $subtotal = 0;
@@ -133,5 +136,17 @@ class CheckoutController extends Controller
             ->firstOrFail();
 
         return view('success', compact('order'));
+    }
+
+    /**
+     * Mostrar e imprimir factura en PDF/HTML.
+     */
+    public function invoice($tracking_number)
+    {
+        $order = Order::with('items.product')
+            ->where('tracking_number', $tracking_number)
+            ->firstOrFail();
+
+        return view('invoice', compact('order'));
     }
 }

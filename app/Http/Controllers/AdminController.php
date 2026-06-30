@@ -193,6 +193,59 @@ class AdminController extends Controller
     }
 
     // ==========================================
+    // Módulo de Categorías (Categories)
+    // ==========================================
+
+    public function categories()
+    {
+        $categories = Category::withCount('products')->latest()->paginate(20);
+        return view('admin.categories.index', compact('categories'));
+    }
+
+    public function storeCategory(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255|unique:categories,name',
+        ]);
+
+        Category::create([
+            'name' => $request->name,
+            'slug' => Str::slug($request->name),
+        ]);
+
+        return back()->with('success', "Categoría '{$request->name}' creada correctamente.");
+    }
+
+    public function updateCategory(Request $request, $id)
+    {
+        $category = Category::findOrFail($id);
+
+        $request->validate([
+            'name' => 'required|string|max:255|unique:categories,name,' . $id,
+        ]);
+
+        $category->update([
+            'name' => $request->name,
+            'slug' => Str::slug($request->name),
+        ]);
+
+        return back()->with('success', "Categoría actualizada correctamente.");
+    }
+
+    public function destroyCategory($id)
+    {
+        $category = Category::findOrFail($id);
+        
+        if ($category->products()->count() > 0) {
+            return back()->with('error', 'No puedes eliminar una categoría que contiene productos.');
+        }
+
+        $category->delete();
+
+        return back()->with('success', 'Categoría eliminada.');
+    }
+
+    // ==========================================
     // Módulo de Notificaciones
     // ==========================================
 
