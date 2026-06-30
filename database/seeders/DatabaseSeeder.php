@@ -16,7 +16,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // Crear usuario de pruebas por defecto
-        User::factory()->create([
+        User::create([
             'name' => 'Admin User',
             'email' => 'admin@ecommerce.com',
             'password' => bcrypt('password'),
