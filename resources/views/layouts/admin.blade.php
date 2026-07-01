@@ -59,7 +59,7 @@
     <!-- =========================================================================
          Sidebar (Fijo Izquierda)
          ========================================================================= -->
-    <aside class="w-72 bg-slate-900/50 backdrop-blur-2xl border-r border-slate-800/50 hidden md:flex flex-col h-screen relative z-40">
+    <aside class="w-72 bg-slate-900/50 backdrop-blur-2xl border-r border-slate-800/50 hidden md:flex flex-col h-screen relative z-10">
         <!-- Brand -->
         <div class="h-20 flex items-center px-8 border-b border-slate-800/50">
             <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 group">
@@ -143,7 +143,7 @@
     <!-- =========================================================================
          Contenido Principal
          ========================================================================= -->
-    <div class="flex-1 flex flex-col h-screen overflow-hidden bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black">
+    <div class="flex-1 flex flex-col h-screen overflow-hidden bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black relative z-20">
         
         <!-- Topbar -->
         <header class="h-20 flex items-center justify-between px-8 bg-slate-900/30 backdrop-blur-md border-b border-slate-800/50 z-30">

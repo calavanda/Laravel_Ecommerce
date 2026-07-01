@@ -5,35 +5,48 @@
 @section('content')
 <div class="space-y-6 max-w-[1400px] mx-auto" x-data="{ 
     showEditModal: false, 
+    showAddModal: false,
     editProduct: {},
     openEditModal(product) {
-        this.editProduct = product;
+        this.editProduct = { ...product, is_featured: !!product.is_featured };
         this.showEditModal = true;
     }
 }">
     <!-- Header -->
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-900/50 p-6 rounded-3xl border border-slate-800">
         <div>
             <h1 class="text-3xl font-extrabold text-white tracking-tight">Catálogo Completo</h1>
             <p class="text-slate-400 text-sm mt-1">Administra el inventario, actualiza precios y descripciones.</p>
         </div>
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-4">
             <span class="px-3 py-1 bg-emerald-500/10 text-emerald-400 font-bold text-xs rounded-lg border border-emerald-500/20">
                 Total: {{ $products->total() }} productos
             </span>
+            <button @click="showAddModal = true" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-indigo-500/25 flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                </svg>
+                Nuevo Producto
+            </button>
         </div>
     </div>
 
-    <!-- Filtros / Buscador simulado -->
-    <div class="bg-slate-900/40 backdrop-blur-xl rounded-2xl border border-slate-800/80 p-4 flex gap-4">
-        <div class="flex-1 relative">
-            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <svg class="h-4 w-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                </svg>
+    <!-- Filtros / Buscador -->
+    <div class="bg-slate-900/40 backdrop-blur-xl rounded-2xl border border-slate-800/80 p-4">
+        <form action="{{ route('admin.products.index') }}" method="GET" class="flex gap-2">
+            <div class="flex-1 relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg class="h-4 w-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                </div>
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar por nombre o categoría..." class="w-full pl-10 pr-4 py-2 bg-slate-950 border border-slate-700/50 rounded-xl text-sm text-slate-300 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all">
             </div>
-            <input type="text" disabled placeholder="Buscar por nombre o categoría..." class="w-full pl-10 pr-4 py-2 bg-slate-950 border border-slate-700/50 rounded-xl text-sm text-slate-300 focus:outline-none cursor-not-allowed opacity-50">
-        </div>
+            @if(request('search'))
+                <a href="{{ route('admin.products.index') }}" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-sm flex items-center justify-center">Limpiar</a>
+            @endif
+            <button type="submit" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl transition-all">Buscar</button>
+        </form>
     </div>
 
     <!-- Tabla -->
@@ -126,79 +139,160 @@
     </div>
 
     <!-- Modal de Edición (Alpine JS) -->
-    <div x-show="showEditModal" style="display: none;" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <!-- Background overlay -->
-            <div x-show="showEditModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 bg-slate-950/80 transition-opacity" aria-hidden="true"></div>
+    <template x-teleport="body">
+        <div x-show="showEditModal" style="display: none;" class="fixed inset-0 z-[100] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                <!-- Background overlay -->
+                <div x-show="showEditModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 bg-slate-950/80 transition-opacity" aria-hidden="true"></div>
 
-            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
-            <!-- Modal panel -->
-            <div x-show="showEditModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="inline-block align-bottom bg-slate-900 border border-slate-700 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
-                <form :action="`/admin/product/${editProduct?.id}`" method="POST" x-ref="editForm">
-                    @csrf
-                    @method('PUT')
-                    
-                    <div class="bg-slate-900 px-6 pt-6 pb-4 sm:p-8 sm:pb-4">
-                        <div class="flex items-center justify-between mb-6">
-                            <h3 class="text-xl leading-6 font-extrabold text-white" id="modal-title">
-                                Editar Producto
-                            </h3>
-                            <button type="button" @click="showEditModal = false" class="text-slate-500 hover:text-white transition-colors">
-                                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                </svg>
+                <!-- Modal panel -->
+                <div x-show="showEditModal" @click.away="showEditModal = false" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="inline-block align-bottom bg-slate-900 border border-slate-700 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full relative z-[101]">
+                    <form :action="`/admin/product/${editProduct?.id}`" method="POST" x-ref="editForm">
+                        @csrf
+                        @method('PUT')
+                        
+                        <div class="bg-slate-900 px-6 pt-6 pb-4 sm:p-8 sm:pb-4">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="text-xl leading-6 font-extrabold text-white" id="modal-title">
+                                    Editar Producto
+                                </h3>
+                                <button type="button" @click="showEditModal = false" class="text-slate-500 hover:text-white transition-colors">
+                                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Nombre</label>
+                                    <input type="text" name="name" x-model="editProduct.name" required class="w-full px-3 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-xs focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Categoría</label>
+                                    <select name="category_id" x-model="editProduct.category_id" required class="w-full px-3 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-xs focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 appearance-none">
+                                        @foreach($categories as $category)
+                                            <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Precio</label>
+                                        <input type="number" step="0.01" name="price" x-model="editProduct.price" required class="w-full px-3 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-xs focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Stock</label>
+                                        <input type="number" name="stock" x-model="editProduct.stock" required class="w-full px-3 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-xs focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Descripción</label>
+                                    <textarea name="description" x-model="editProduct.description" required rows="3" class="w-full px-3 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-xs focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"></textarea>
+                                </div>
+
+                                <div class="flex items-center gap-3 py-2 bg-slate-950/50 px-3 rounded-xl border border-slate-800">
+                                    <!-- Use a hidden input as fallback in case unchecked -->
+                                    <input type="hidden" name="is_featured" value="0">
+                                    <input type="checkbox" name="is_featured" id="edit_is_featured" value="1" x-model="editProduct.is_featured" class="h-4 w-4 bg-slate-900 border-slate-700 text-emerald-500 focus:ring-emerald-500/50 rounded transition-colors cursor-pointer z-10 relative">
+                                    <label for="edit_is_featured" class="text-xs font-medium text-white cursor-pointer select-none">Destacar en Portada</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-slate-900/50 px-4 py-4 sm:px-6 sm:flex sm:flex-row-reverse border-t border-slate-800">
+                            <button type="submit" class="w-full inline-flex justify-center rounded-xl border border-transparent shadow-sm px-6 py-2.5 bg-indigo-600 text-sm font-bold text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 focus:ring-offset-slate-900 sm:ml-3 sm:w-auto sm:text-sm transition-colors relative z-10">
+                                Guardar Cambios
+                            </button>
+                            <button type="button" @click="showEditModal = false" class="mt-3 w-full inline-flex justify-center rounded-xl border border-slate-700 shadow-sm px-6 py-2.5 bg-slate-800 text-sm font-medium text-slate-300 hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 focus:ring-offset-slate-900 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm transition-colors relative z-10">
+                                Cancelar
                             </button>
                         </div>
-                        
-                        <div class="space-y-4">
-                            <div>
-                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Nombre</label>
-                                <input type="text" name="name" x-model="editProduct.name" required class="w-full px-3 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-xs focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
-                            </div>
-                            
-                            <div>
-                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Categoría</label>
-                                <select name="category_id" x-model="editProduct.category_id" required class="w-full px-3 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-xs focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 appearance-none">
-                                    @foreach($categories as $category)
-                                        <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Precio</label>
-                                    <input type="number" step="0.01" name="price" x-model="editProduct.price" required class="w-full px-3 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-xs focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
-                                </div>
-                                <div>
-                                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Stock</label>
-                                    <input type="number" name="stock" x-model="editProduct.stock" required class="w-full px-3 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-xs focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
-                                </div>
-                            </div>
-                            
-                            <div>
-                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Descripción</label>
-                                <textarea name="description" x-model="editProduct.description" required rows="3" class="w-full px-3 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-xs focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"></textarea>
-                            </div>
-
-                            <div class="flex items-center gap-3 py-2 bg-slate-950/50 px-3 rounded-xl border border-slate-800">
-                                <input type="checkbox" name="is_featured" id="edit_is_featured" value="1" :checked="editProduct?.is_featured == 1" class="h-4 w-4 bg-slate-900 border-slate-700 text-emerald-500 focus:ring-emerald-500/50 rounded transition-colors cursor-pointer">
-                                <label for="edit_is_featured" class="text-xs font-medium text-white cursor-pointer select-none">Destacar en Portada</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-slate-900/50 px-4 py-4 sm:px-6 sm:flex sm:flex-row-reverse border-t border-slate-800">
-                        <button type="submit" class="w-full inline-flex justify-center rounded-xl border border-transparent shadow-sm px-6 py-2.5 bg-indigo-600 text-sm font-bold text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 focus:ring-offset-slate-900 sm:ml-3 sm:w-auto sm:text-sm transition-colors">
-                            Guardar Cambios
-                        </button>
-                        <button type="button" @click="showEditModal = false" class="mt-3 w-full inline-flex justify-center rounded-xl border border-slate-700 shadow-sm px-6 py-2.5 bg-slate-800 text-sm font-medium text-slate-300 hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 focus:ring-offset-slate-900 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm transition-colors">
-                            Cancelar
-                        </button>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
+    </template>
+
+    <!-- Modal de Creación (Alpine JS) -->
+    <template x-teleport="body">
+        <div x-show="showAddModal" style="display: none;" class="fixed inset-0 z-[100] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                <!-- Background overlay -->
+                <div x-show="showAddModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 bg-slate-950/80 transition-opacity" aria-hidden="true"></div>
+
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+                <div x-show="showAddModal" @click.away="showAddModal = false" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="inline-block align-bottom bg-slate-900 border border-slate-700 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full relative z-[101]">
+                    <form action="{{ route('admin.product.store') }}" method="POST">
+                        @csrf
+                        
+                        <div class="bg-slate-900 px-6 pt-6 pb-4 sm:p-8 sm:pb-4">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="text-xl leading-6 font-extrabold text-white" id="modal-title">
+                                    Nuevo Producto
+                                </h3>
+                                <button type="button" @click="showAddModal = false" class="text-slate-500 hover:text-white transition-colors">
+                                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Nombre</label>
+                                    <input type="text" name="name" required class="w-full px-3 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-xs focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Categoría</label>
+                                    <select name="category_id" required class="w-full px-3 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-xs focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 appearance-none">
+                                        @foreach($categories as $category)
+                                            <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Precio</label>
+                                        <input type="number" step="0.01" name="price" required class="w-full px-3 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-xs focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Stock</label>
+                                        <input type="number" name="stock" required class="w-full px-3 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-xs focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Descripción</label>
+                                    <textarea name="description" required rows="3" class="w-full px-3 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-xs focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"></textarea>
+                                </div>
+
+                                <div class="flex items-center gap-3 py-2 bg-slate-950/50 px-3 rounded-xl border border-slate-800">
+                                    <input type="hidden" name="is_featured" value="0">
+                                    <input type="checkbox" name="is_featured" id="add_is_featured" value="1" class="h-4 w-4 bg-slate-900 border-slate-700 text-emerald-500 focus:ring-emerald-500/50 rounded transition-colors cursor-pointer z-10 relative">
+                                    <label for="add_is_featured" class="text-xs font-medium text-white cursor-pointer select-none">Destacar en Portada</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-slate-900/50 px-4 py-4 sm:px-6 sm:flex sm:flex-row-reverse border-t border-slate-800">
+                            <button type="submit" class="w-full inline-flex justify-center rounded-xl border border-transparent shadow-sm px-6 py-2.5 bg-indigo-600 text-sm font-bold text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 focus:ring-offset-slate-900 sm:ml-3 sm:w-auto sm:text-sm transition-colors relative z-10">
+                                Guardar
+                            </button>
+                            <button type="button" @click="showAddModal = false" class="mt-3 w-full inline-flex justify-center rounded-xl border border-slate-700 shadow-sm px-6 py-2.5 bg-slate-800 text-sm font-medium text-slate-300 hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 focus:ring-offset-slate-900 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm transition-colors relative z-10">
+                                Cancelar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </template>
 </div>
 @endsection
