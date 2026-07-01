@@ -4,11 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Factura de Pago - {{ $order->tracking_number }}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         @media print {
-            body { background-color: white; color: black; }
-            .no-print { display: none; }
+            body { background-color: white !important; color: black !important; }
+            .no-print { display: none !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            .shadow-xl, .shadow-lg { box-shadow: none !important; }
+            .border { border-color: #e2e8f0 !important; }
         }
     </style>
 </head>
@@ -108,12 +111,13 @@
     </div>
 
     <script>
-        // Imprimir automáticamente al cargar (opcional, pero útil)
-        window.onload = function() {
+        // Imprimir automáticamente cuando todos los recursos estén listos
+        window.addEventListener('load', function() {
+            // Un pequeño retraso para asegurar que los estilos de Vite se apliquen
             setTimeout(function() {
                 window.print();
-            }, 500);
-        };
+            }, 1000);
+        });
     </script>
 </body>
 </html>
