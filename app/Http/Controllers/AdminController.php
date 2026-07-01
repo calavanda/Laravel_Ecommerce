@@ -153,9 +153,19 @@ class AdminController extends Controller
     // Módulo de Productos (Products)
     // ==========================================
 
-    public function products()
+    public function products(Request $request)
     {
-        $products = Product::with('category')->latest()->paginate(20);
+        $search = $request->query('search');
+        $products = Product::with('category')
+            ->when($search, function($query, $search) {
+                return $query->where('name', 'like', "%{$search}%")
+                    ->orWhereHas('category', function($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%");
+                    });
+            })
+            ->latest()
+            ->paginate(20)
+            ->withQueryString();
         $categories = Category::all();
         return view('admin.products.index', compact('products', 'categories'));
     }
@@ -196,9 +206,16 @@ class AdminController extends Controller
     // Módulo de Categorías (Categories)
     // ==========================================
 
-    public function categories()
+    public function categories(Request $request)
     {
-        $categories = Category::withCount('products')->latest()->paginate(20);
+        $search = $request->query('search');
+        $categories = Category::withCount('products')
+            ->when($search, function($query, $search) {
+                return $query->where('name', 'like', "%{$search}%");
+            })
+            ->latest()
+            ->paginate(20)
+            ->withQueryString();
         return view('admin.categories.index', compact('categories'));
     }
 
