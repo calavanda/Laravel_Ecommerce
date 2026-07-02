@@ -1,5 +1,0 @@
-@extends('errors.layout')
-@section('title', 'Sesión Expirada')
-@section('code', '419')
-@section('message', 'Sesión Expirada')
-@section('description', 'Tu sesión ha caducado por inactividad. Por favor, regresa y actualiza la página para reanudar de forma segura.')

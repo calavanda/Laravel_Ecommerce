@@ -1,5 +1,0 @@
-@extends('errors.layout')
-@section('title', 'Error Interno')
-@section('code', '500')
-@section('message', 'Error del Servidor')
-@section('description', '¡Ups! Algo salió mal de nuestro lado. Nuestro equipo de soporte técnico ha sido notificado y estamos trabajando en ello.')

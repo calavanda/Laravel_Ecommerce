@@ -1,5 +1,0 @@
-@extends('errors.layout')
-@section('title', 'Página No Encontrada')
-@section('code', '404')
-@section('message', 'Página No Encontrada')
-@section('description', 'Lo sentimos, la página que estás buscando no existe, ha sido movida o está temporalmente inaccesible.')
