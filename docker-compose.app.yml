@@ -22,7 +22,7 @@ services:
 
       # ─── Base de Datos (PC 4) ─────────────────────────────────────
       DB_CONNECTION: mysql
-      DB_HOST: ${DB_HOST:-192.168.1.104}
+      DB_HOST: ${DB_HOST:-10.10.1.25}
       DB_PORT: ${DB_PORT:-3306}
       DB_DATABASE: ${DB_DATABASE:-scrum_proyecto_db}
       DB_USERNAME: ${DB_USERNAME:-root}
@@ -30,7 +30,7 @@ services:
 
       # ─── Redis (PC 4) ─────────────────────────────────────────────
       REDIS_CLIENT: phpredis
-      REDIS_HOST: ${REDIS_HOST:-192.168.1.104}
+      REDIS_HOST: ${REDIS_HOST:-10.10.1.25}
       REDIS_PORT: ${REDIS_PORT:-6379}
       REDIS_PASSWORD: ${REDIS_PASSWORD:-null}
 
@@ -45,7 +45,7 @@ services:
       AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION:-us-east-1}
       AWS_BUCKET: ${AWS_BUCKET:-eliteshop-storage}
       AWS_USE_PATH_STYLE_ENDPOINT: ${AWS_USE_PATH_STYLE_ENDPOINT:-true}
-      AWS_ENDPOINT: ${AWS_ENDPOINT:-http://${DB_HOST:-192.168.0.20}:9000}
+      AWS_ENDPOINT: ${AWS_ENDPOINT:-http://${DB_HOST:-10.10.1.25}:9000}
 
       # ─── Clerk Auth ───────────────────────────────────────────────
       CLERK_SECRET_KEY: ${CLERK_SECRET_KEY}
