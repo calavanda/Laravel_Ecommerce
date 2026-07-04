@@ -168,6 +168,8 @@
             </div>
             <p>&copy; 2026 Ecommerce Elite. Diseñado con un stack de alta disponibilidad Docker en Debian/Ubuntu.</p>
             <div class="flex gap-4">
+                    <a href="{{ route('privacy') }}" class="hover:text-white transition-colors duration-200">Aviso de Privacidad</a>
+                    <span class="text-slate-800">|</span>
                     @if(Auth::check() && (Auth::user()->is_admin || (env('CLERK_ADMIN_EMAILS') && in_array(Auth::user()->email, array_filter(array_map('trim', explode(',', env('CLERK_ADMIN_EMAILS'))))))))
                     <a href="{{ route('admin.dashboard') }}" class="hover:text-white transition-colors duration-200">Panel Admin</a>
                     <span class="text-slate-800">|</span>
