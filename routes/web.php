@@ -61,3 +61,14 @@ Route::middleware(['clerk', 'clerk.admin'])->prefix('admin')->group(function () 
     // Notificaciones
     Route::post('/notifications/read', [AdminController::class, 'markNotificationsRead'])->name('admin.notifications.read');
 });
+
+// ==========================================
+// Rutas de API (JSON) y Legales
+// ==========================================
+Route::get('/api/productos', function () {
+    return response()->json(\App\Models\Product::with('category')->get());
+});
+
+Route::get('/privacidad', function () {
+    return view('privacy');
+})->name('privacy');
