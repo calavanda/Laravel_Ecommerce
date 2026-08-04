@@ -93,9 +93,11 @@ COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY docker/start.sh /usr/local/bin/start.sh
 RUN chmod +x /usr/local/bin/start.sh
 
-# Permisos finales
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache && \
-    chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+# Permisos finales y arreglos para subida de archivos (Nginx usa www-data)
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/lib/nginx && \
+    chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache && \
+    echo 'upload_max_filesize = 20M' >> /usr/local/etc/php/conf.d/uploads.ini && \
+    echo 'post_max_size = 20M' >> /usr/local/etc/php/conf.d/uploads.ini
 
 EXPOSE 80
 
