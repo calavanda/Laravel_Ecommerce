@@ -1,15 +1,5 @@
 # ==========================================
-# Etapa 1: Compilación de Assets (Vite)
-# ==========================================
-FROM node:20-alpine AS assets-builder
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci --silent
-COPY . .
-RUN npm run build
-
-# ==========================================
-# Etapa 2: Aplicación Laravel con PHP-FPM
+# Etapa 1: Aplicación Laravel con PHP-FPM
 # ==========================================
 FROM php:8.2-fpm-alpine
 
@@ -58,9 +48,8 @@ WORKDIR /var/www/html
 # Copiar código fuente
 COPY . /var/www/html
 
-# Copiar assets compilados desde la etapa 1
-COPY --from=assets-builder /app/public/build /var/www/html/public/build
-COPY --from=assets-builder /app/public/images /var/www/html/public/images
+# Asegurar que los assets compilados y las imágenes se mantengan
+# (Se asume que ya se compilaron en el host antes de construir la imagen)
 
 # Instalar dependencias PHP (sin devtools, optimizado)
 ENV COMPOSER_ALLOW_SUPERUSER=1
