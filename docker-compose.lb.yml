@@ -1,9 +1,10 @@
 services:
   # ===================================================================
-  # PC 1 – Load Balancer: Nginx + Cloudflare Tunnel
+  # PC 1 – Load Balancer: Nginx + ngrok
   # Instrucciones:
-  #   1. Crear tu tunnel en Cloudflare y copiar el token en el .env de PC1
+  #   1. Editar el .env con las IPs de PC2, PC3 y tu NGROK_AUTHTOKEN
   #   2. docker compose -f docker-compose.lb.yml up -d
+  #   3. Ver la URL pública: curl http://localhost:4040/api/tunnels
   # ===================================================================
 
   nginx-lb:
@@ -13,6 +14,19 @@ services:
       - "80:80"
     volumes:
       - ./docker/nginx.lb.conf:/etc/nginx/nginx.conf:ro
+    environment:
+      - APP_SERVER_1=${APP_SERVER_1:-192.168.0.24:8080}
+      - APP_SERVER_2=${APP_SERVER_2:-192.168.0.24:8080}
+    # envsubst reemplaza las variables ${APP_SERVER_1} y ${APP_SERVER_2}
+    # en el template y genera el nginx.conf final
+    command: >
+      /bin/sh -c "
+        envsubst '$$APP_SERVER_1 $$APP_SERVER_2' 
+        < /etc/nginx/nginx.conf 
+        > /etc/nginx/nginx.conf.tmp 
+        && mv /etc/nginx/nginx.conf.tmp /etc/nginx/nginx.conf 
+        && nginx -g 'daemon off;'
+      "
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost/health-check"]
@@ -24,11 +38,14 @@ services:
       options:
         max-size: "20m"
         max-file: "10"
+
   ngrok:
     image: ngrok/ngrok:latest
     container_name: ngrok-tunnel
     command: "http nginx-lb:80"
     restart: unless-stopped
+    ports:
+      - "4040:4040"
     environment:
       - NGROK_AUTHTOKEN=${NGROK_AUTHTOKEN}
     depends_on:
@@ -38,4 +55,3 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
-

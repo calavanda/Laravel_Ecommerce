@@ -35,7 +35,8 @@ http {
 
     # =========================================================
     # UPSTREAM – App Servers (PC2 y PC3)
-    # Las IPs vienen de APP_SERVER_1 y APP_SERVER_2 en el .env
+    # Las IPs vienen de las variables APP_SERVER_1 y APP_SERVER_2
+    # definidas en docker-compose.lb.yml → .env
     # =========================================================
     upstream laravel_backend {
         least_conn;
