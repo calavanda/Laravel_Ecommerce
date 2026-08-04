@@ -19,6 +19,7 @@ class Product extends Model
         'price',
         'stock',
         'image_path',
+        'images',
         'is_featured',
     ];
 
@@ -26,6 +27,7 @@ class Product extends Model
         'price' => 'decimal:2',
         'stock' => 'integer',
         'is_featured' => 'boolean',
+        'images' => 'array',
     ];
 
     /**

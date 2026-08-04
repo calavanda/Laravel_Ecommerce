@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class AdminController extends Controller
@@ -38,8 +39,21 @@ class AdminController extends Controller
             'description' => 'required|string',
             'price' => 'required|numeric|min:0.01',
             'stock' => 'required|integer|min:0',
-            'image_path' => 'nullable|string',
+            'main_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'extra_images.*' => 'image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
+
+        $imagePath = 'tech-headphones'; // Valor por defecto
+        if ($request->hasFile('main_image')) {
+            $imagePath = $request->file('main_image')->store('products', 'public');
+        }
+
+        $extraImages = [];
+        if ($request->hasFile('extra_images')) {
+            foreach ($request->file('extra_images') as $image) {
+                $extraImages[] = $image->store('products', 'public');
+            }
+        }
 
         $product = Product::create([
             'name' => $request->input('name'),
@@ -48,7 +62,8 @@ class AdminController extends Controller
             'description' => $request->input('description'),
             'price' => $request->input('price'),
             'stock' => $request->input('stock'),
-            'image_path' => $request->input('image_path', 'tech-headphones'), // Valor por defecto
+            'image_path' => $imagePath,
+            'images' => empty($extraImages) ? null : $extraImages,
             'is_featured' => $request->has('is_featured'),
         ]);
 
@@ -180,16 +195,35 @@ class AdminController extends Controller
             'description' => 'required|string',
             'price' => 'required|numeric|min:0.01',
             'stock' => 'required|integer|min:0',
+            'main_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'extra_images.*' => 'image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
-        $product->update([
+        $data = [
             'name' => $request->name,
             'category_id' => $request->category_id,
             'description' => $request->description,
             'price' => $request->price,
             'stock' => $request->stock,
             'is_featured' => $request->has('is_featured'),
-        ]);
+        ];
+
+        if ($request->hasFile('main_image')) {
+            if ($product->image_path && $product->image_path !== 'tech-headphones' && Storage::disk('public')->exists($product->image_path)) {
+                Storage::disk('public')->delete($product->image_path);
+            }
+            $data['image_path'] = $request->file('main_image')->store('products', 'public');
+        }
+
+        if ($request->hasFile('extra_images')) {
+            $extraImages = $product->images ?? [];
+            foreach ($request->file('extra_images') as $image) {
+                $extraImages[] = $image->store('products', 'public');
+            }
+            $data['images'] = $extraImages;
+        }
+
+        $product->update($data);
 
         return back()->with('success', "Producto '{$product->name}' actualizado correctamente.");
     }
@@ -197,9 +231,34 @@ class AdminController extends Controller
     public function destroyProduct($id)
     {
         $product = Product::findOrFail($id);
+        
+        if ($product->image_path && $product->image_path !== 'tech-headphones' && Storage::disk('public')->exists($product->image_path)) {
+            Storage::disk('public')->delete($product->image_path);
+        }
+        
+        if ($product->images) {
+            foreach ($product->images as $image) {
+                if (Storage::disk('public')->exists($image)) {
+                    Storage::disk('public')->delete($image);
+                }
+            }
+        }
+        
         $product->delete();
 
         return back()->with('success', 'Producto eliminado del catálogo.');
+    }
+
+    public function toggleFeatured($id)
+    {
+        $product = Product::findOrFail($id);
+        $product->update(['is_featured' => !$product->is_featured]);
+        
+        return response()->json([
+            'success' => true, 
+            'is_featured' => $product->is_featured,
+            'message' => 'Estado de destacado actualizado.'
+        ]);
     }
 
     // ==========================================

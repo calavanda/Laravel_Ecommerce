@@ -42,6 +42,7 @@ Route::middleware(['clerk', 'clerk.admin'])->prefix('admin')->group(function () 
     Route::post('/product/{id}/stock', [AdminController::class, 'updateStock'])->name('admin.product.update-stock');
     Route::put('/product/{id}', [AdminController::class, 'updateProduct'])->name('admin.product.update');
     Route::delete('/product/{id}', [AdminController::class, 'destroyProduct'])->name('admin.product.destroy');
+    Route::post('/product/{id}/toggle-featured', [AdminController::class, 'toggleFeatured'])->name('admin.product.toggle-featured');
     
     // Categorías
     Route::get('/categories', [AdminController::class, 'categories'])->name('admin.categories.index');

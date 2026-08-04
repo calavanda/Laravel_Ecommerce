@@ -18,10 +18,53 @@
          ========================================================================= -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 bg-slate-950/40 p-8 sm:p-12 rounded-3xl border border-slate-900 shadow-2xl backdrop-blur-sm">
         
-        <!-- Columna Izquierda: Ilustración SVG -->
-        <div class="bg-slate-900/60 rounded-2xl p-12 border border-slate-800/80 flex items-center justify-center min-h-[300px] sm:min-h-[450px]">
-            <div class="w-full max-w-sm">
-                @include('partials.product-svg', ['path' => $product->image_path])
+        <!-- Columna Izquierda: Carrusel de Imágenes -->
+        <div class="bg-slate-900/60 rounded-2xl p-6 border border-slate-800/80 flex flex-col justify-center min-h-[300px] sm:min-h-[450px]" 
+            x-data="{ 
+                activeImage: 0, 
+                images: [
+                    @if($product->image_path && Str::startsWith($product->image_path, 'products/'))
+                        '{{ asset('storage/' . $product->image_path) }}'
+                    @else
+                        '{{ asset('images/' . $product->image_path . '.svg') }}'
+                    @endif
+                    @if($product->images)
+                        @foreach($product->images as $img)
+                            , '{{ asset('storage/' . $img) }}'
+                        @endforeach
+                    @endif
+                ] 
+            }">
+            
+            <!-- Imagen Principal Activa -->
+            <div class="relative w-full aspect-square bg-slate-950/50 rounded-xl overflow-hidden flex items-center justify-center border border-slate-800 mb-4">
+                <template x-for="(img, index) in images" :key="index">
+                    <img x-show="activeImage === index" 
+                         x-transition.opacity.duration.300ms
+                         :src="img" 
+                         alt="{{ $product->name }}" 
+                         class="absolute inset-0 w-full h-full object-contain p-4"
+                         onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdib3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOTQxM2EyIiBzdHJva2Utd2lkdGg9IjIiPjxyZWN0IHg9IjMiIHk9IjMiIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgcng9IjIiIHJ5PSIyIj48L3JlY3Q+PGNpcmNsZSBjeD0iOC41IiBjeT0iOC41IiByPSIxLjUiPjwvY2lyY2xlPjxwb2x5bGluZSBwb2ludHM9IjIxIDE1IDE2IDEwIDUgMjEiPjwvcG9seWxpbmU+PC9zdmc+'">
+                </template>
+                
+                <!-- Flechas de navegación (solo si hay más de 1 imagen) -->
+                <button x-show="images.length > 1" @click="activeImage = activeImage === 0 ? images.length - 1 : activeImage - 1" type="button" class="absolute left-4 p-2 bg-slate-900/80 hover:bg-indigo-600 text-white rounded-full backdrop-blur-sm transition-colors border border-slate-700/50 z-10 focus:outline-none">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                </button>
+                <button x-show="images.length > 1" @click="activeImage = activeImage === images.length - 1 ? 0 : activeImage + 1" type="button" class="absolute right-4 p-2 bg-slate-900/80 hover:bg-indigo-600 text-white rounded-full backdrop-blur-sm transition-colors border border-slate-700/50 z-10 focus:outline-none">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                </button>
+            </div>
+            
+            <!-- Miniaturas -->
+            <div x-show="images.length > 1" class="flex gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent">
+                <template x-for="(img, index) in images" :key="index">
+                    <button @click="activeImage = index" type="button"
+                            class="relative shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all duration-200 focus:outline-none"
+                            :class="activeImage === index ? 'border-indigo-500 opacity-100 scale-105' : 'border-slate-800 opacity-60 hover:opacity-100 bg-slate-950'">
+                        <img :src="img" class="w-full h-full object-cover" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdib3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOTQxM2EyIiBzdHJva2Utd2lkdGg9IjIiPjxyZWN0IHg9IjMiIHk9IjMiIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgcng9IjIiIHJ5PSIyIj48L3JlY3Q+PGNpcmNsZSBjeD0iOC41IiBjeT0iOC41IiByPSIxLjUiPjwvY2lyY2xlPjxwb2x5bGluZSBwb2ludHM9IjIxIDE1IDE2IDEwIDUgMjEiPjwvcG9seWxpbmU+PC9zdmc+'">
+                    </button>
+                </template>
             </div>
         </div>
 

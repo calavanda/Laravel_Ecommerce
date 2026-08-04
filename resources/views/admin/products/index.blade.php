@@ -68,7 +68,11 @@
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-4">
                                     <div class="h-10 w-10 rounded-xl bg-slate-800 flex items-center justify-center border border-slate-700 overflow-hidden">
-                                        <img src="{{ asset('images/' . $product->image_path . '.svg') }}" alt="{{ $product->name }}" class="h-6 w-6 opacity-70 group-hover:opacity-100 transition-opacity" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdib3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOTQxM2EyIiBzdHJva2Utd2lkdGg9IjIiPjxyZWN0IHg9IjMiIHk9IjMiIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgcng9IjIiIHJ5PSIyIj48L3JlY3Q+PGNpcmNsZSBjeD0iOC41IiBjeT0iOC41IiByPSIxLjUiPjwvY2lyY2xlPjxwb2x5bGluZSBwb2ludHM9IjIxIDE1IDE2IDEwIDUgMjEiPjwvcG9seWxpbmU+PC9zdmc+'">
+                                        @if($product->image_path && Str::startsWith($product->image_path, 'products/'))
+                                            <img src="{{ asset('storage/' . $product->image_path) }}" alt="{{ $product->name }}" class="h-full w-full object-cover opacity-90 group-hover:opacity-100 transition-opacity">
+                                        @else
+                                            <img src="{{ asset('images/' . $product->image_path . '.svg') }}" alt="{{ $product->name }}" class="h-6 w-6 opacity-70 group-hover:opacity-100 transition-opacity" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdib3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOTQxM2EyIiBzdHJva2Utd2lkdGg9IjIiPjxyZWN0IHg9IjMiIHk9IjMiIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgcng9IjIiIHJ5PSIyIj48L3JlY3Q+PGNpcmNsZSBjeD0iOC41IiBjeT0iOC41IiByPSIxLjUiPjwvY2lyY2xlPjxwb2x5bGluZSBwb2ludHM9IjIxIDE1IDE2IDEwIDUgMjEiPjwvcG9seWxpbmU+PC9zdmc+'">
+                                        @endif
                                     </div>
                                     <div>
                                         <div class="font-bold text-white text-sm">{{ $product->name }}</div>
@@ -90,16 +94,15 @@
                                     </span>
                                 @endif
                             </td>
-                            <td class="px-6 py-4">
-                                @if($product->is_featured)
-                                    <svg class="w-5 h-5 text-amber-400 drop-shadow-[0_0_5px_rgba(251,191,36,0.5)]" fill="currentColor" viewBox="0 0 20 20">
+                            <td class="px-6 py-4" x-data="{ is_featured: {{ $product->is_featured ? 'true' : 'false' }} }">
+                                <button type="button" @click="async () => { 
+                                    let res = await fetch('/admin/product/{{ $product->id }}/toggle-featured', { method: 'POST', headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json'}});
+                                    if(res.ok) { let data = await res.json(); is_featured = data.is_featured; }
+                                }" class="focus:outline-none">
+                                    <svg class="w-5 h-5 drop-shadow-[0_0_5px_rgba(251,191,36,0.5)] transition-colors" :class="is_featured ? 'text-amber-400' : 'text-slate-600'" fill="currentColor" viewBox="0 0 20 20">
                                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                                     </svg>
-                                @else
-                                    <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-                                    </svg>
-                                @endif
+                                </button>
                             </td>
                             <td class="px-6 py-4 text-right">
                                 <div class="flex items-center justify-end gap-2 opacity-50 group-hover:opacity-100 transition-opacity">
@@ -149,7 +152,7 @@
 
                 <!-- Modal panel -->
                 <div x-show="showEditModal" @click.away="showEditModal = false" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="inline-block align-bottom bg-slate-900 border border-slate-700 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full relative z-[101]">
-                    <form :action="`/admin/product/${editProduct?.id}`" method="POST" x-ref="editForm">
+                    <form :action="`/admin/product/${editProduct?.id}`" method="POST" x-ref="editForm" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
                         
@@ -196,6 +199,17 @@
                                     <textarea name="description" x-model="editProduct.description" required rows="3" class="w-full px-3 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-xs focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"></textarea>
                                 </div>
 
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Imagen Principal</label>
+                                        <input type="file" name="main_image" accept="image/*" class="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-slate-300 text-xs focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:font-semibold file:bg-indigo-500/10 file:text-indigo-400 hover:file:bg-indigo-500/20">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Imágenes Extra</label>
+                                        <input type="file" name="extra_images[]" multiple accept="image/*" class="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-slate-300 text-xs focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:font-semibold file:bg-indigo-500/10 file:text-indigo-400 hover:file:bg-indigo-500/20">
+                                    </div>
+                                </div>
+
                                 <div class="flex items-center gap-3 py-2 bg-slate-950/50 px-3 rounded-xl border border-slate-800">
                                     <!-- Use a hidden input as fallback in case unchecked -->
                                     <input type="hidden" name="is_featured" value="0">
@@ -228,7 +242,7 @@
                 <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
                 <div x-show="showAddModal" @click.away="showAddModal = false" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="inline-block align-bottom bg-slate-900 border border-slate-700 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full relative z-[101]">
-                    <form action="{{ route('admin.product.store') }}" method="POST">
+                    <form action="{{ route('admin.product.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         
                         <div class="bg-slate-900 px-6 pt-6 pb-4 sm:p-8 sm:pb-4">
@@ -272,6 +286,17 @@
                                 <div>
                                     <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Descripción</label>
                                     <textarea name="description" required rows="3" class="w-full px-3 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-xs focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"></textarea>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Imagen Principal</label>
+                                        <input type="file" name="main_image" accept="image/*" class="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-slate-300 text-xs focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:font-semibold file:bg-indigo-500/10 file:text-indigo-400 hover:file:bg-indigo-500/20">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Imágenes Extra</label>
+                                        <input type="file" name="extra_images[]" multiple accept="image/*" class="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-slate-300 text-xs focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:font-semibold file:bg-indigo-500/10 file:text-indigo-400 hover:file:bg-indigo-500/20">
+                                    </div>
                                 </div>
 
                                 <div class="flex items-center gap-3 py-2 bg-slate-950/50 px-3 rounded-xl border border-slate-800">
