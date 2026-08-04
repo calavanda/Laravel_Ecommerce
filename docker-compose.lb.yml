@@ -35,10 +35,9 @@ services:
   ngrok:
     image: ngrok/ngrok:latest
     container_name: ngrok-tunnel
-    command: "http nginx-lb:80 --log stdout --log-level info"
+    command: "http localhost:80 --log stdout --log-level info"
+    network_mode: host
     restart: unless-stopped
-    ports:
-      - "4040:4040"
     environment:
       - NGROK_AUTHTOKEN=${NGROK_AUTHTOKEN}
     depends_on:
@@ -48,3 +47,4 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+
