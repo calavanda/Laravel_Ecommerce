@@ -10,8 +10,7 @@ services:
   nginx-lb:
     image: nginx:1.25-alpine
     container_name: nginx-load-balancer
-    ports:
-      - "80:80"
+    network_mode: host
     volumes:
       - ./docker/nginx.lb.conf:/etc/nginx/nginx.conf:ro
     environment:
