@@ -12,11 +12,11 @@ USE `scrum_proyecto_db`;
 
 -- Asegurar que root puede conectarse desde cualquier host de la LAN
 -- (Las IPs de PC2 y PC3 necesitan este permiso)
-CREATE USER IF NOT EXISTS 'root'@'192.168.1.102' IDENTIFIED BY 'admin';
-GRANT ALL PRIVILEGES ON scrum_proyecto_db.* TO 'root'@'192.168.1.102';
+CREATE USER IF NOT EXISTS 'root'@'10.10.1.83' IDENTIFIED BY 'admin';
+GRANT ALL PRIVILEGES ON scrum_proyecto_db.* TO 'root'@'10.10.1.83';
 
-CREATE USER IF NOT EXISTS 'root'@'192.168.1.103' IDENTIFIED BY 'admin';
-GRANT ALL PRIVILEGES ON scrum_proyecto_db.* TO 'root'@'192.168.1.103';
+CREATE USER IF NOT EXISTS 'root'@'10.10.1.82' IDENTIFIED BY 'admin';
+GRANT ALL PRIVILEGES ON scrum_proyecto_db.* TO 'root'@'10.10.1.82';
 
 -- Permisos desde cualquier IP interna (más flexible para laboratorio)
 CREATE USER IF NOT EXISTS 'root'@'%' IDENTIFIED BY 'admin';

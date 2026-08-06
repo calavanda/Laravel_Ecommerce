@@ -14,8 +14,8 @@ services:
     volumes:
       - ./docker/nginx.lb.conf:/etc/nginx/nginx.conf:ro
     environment:
-      - APP_SERVER_1=${APP_SERVER_1:-192.168.0.24:8080}
-      - APP_SERVER_2=${APP_SERVER_2:-192.168.0.24:8080}
+      - APP_SERVER_1=${APP_SERVER_1:-10.10.1.82:8080}
+      - APP_SERVER_2=${APP_SERVER_2:-10.10.1.83:8080}
     # envsubst reemplaza las variables ${APP_SERVER_1} y ${APP_SERVER_2}
     # en el template y genera el nginx.conf final
     command: ["/bin/sh", "-c", "envsubst '$$APP_SERVER_1 $$APP_SERVER_2' < /etc/nginx/nginx.conf > /tmp/nginx.conf && nginx -c /tmp/nginx.conf -g 'daemon off;'"]
